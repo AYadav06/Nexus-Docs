@@ -80,12 +80,15 @@ class RecursiveChunker:
         """Splits raw text and returns typed DocumentChunk objects with metadata."""
         raw_chunks = self._split_text(text, self.separators)
         chunks: list[DocumentChunk] = []
-        for raw in raw_chunks:
+        for idx, raw in enumerate(raw_chunks):
             if not raw.strip():
                 continue
             chunk = DocumentChunk.create(
                 content=raw.strip(),
-                metadata=base_metadata.model_copy()
+                metadata=base_metadata.model_copy(),
+                chunk_index=idx,
             )
             chunks.append(chunk)
         return chunks
+
+

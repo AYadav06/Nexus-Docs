@@ -27,8 +27,9 @@ class DocumentChunk(BaseModel):
     metadata: DocumentMetadata
 
     @classmethod
-    def create(cls, content: str, metadata: DocumentMetadata) -> "DocumentChunk":
+    def create(cls, content: str, metadata: DocumentMetadata, chunk_index: int = 0) -> "DocumentChunk":
         """Generates a deterministic hash for deduplication."""
-        unique_string = f"{metadata.source_path}:{metadata.page_number}:{content.strip()}"
+        unique_string = f"{metadata.source_path}:{metadata.page_number}:{chunk_index}:{content.strip()}"
         chunk_id = hashlib.sha256(unique_string.encode()).hexdigest()[:16]
         return cls(chunk_id=chunk_id, content=content, metadata=metadata)
+
