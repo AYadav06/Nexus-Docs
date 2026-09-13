@@ -48,11 +48,11 @@ A step-by-step roadmap to build an industry-grade Retrieval-Augmented Generation
 ## 📋 Phase-by-Phase Checklist
 
 ### Phase 1: Project Setup & Architecture Foundations
-- [ ] **1.1 Virtual Environment & Dependency Management**
+- [x] **1.1 Virtual Environment & Dependency Management**
   - Use `uv` to manage Python 3.13 dependencies.
   - Setup core dependencies (`fastapi`, `uvicorn`, `pydantic`, `pydantic-settings`, `python-dotenv`).
   - Configure `.env.example` and environment configuration manager.
-- [ ] **1.2 Project Layout & Modular Folder Structure**
+- [x] **1.2 Project Layout & Modular Folder Structure**
   - `src/core/` (config, logging, exceptions)
   - `src/ingestion/` (document loaders, preprocessors, chunkers)
   - `src/embeddings/` (embedding model wrapper interfaces)
@@ -62,31 +62,31 @@ A step-by-step roadmap to build an industry-grade Retrieval-Augmented Generation
   - `src/api/` (FastAPI routes, schemas, streaming endpoints)
   - `eval/` (test datasets, RAGAS/custom evaluation scripts)
   - `data/` (sample PDFs, code repositories, docs)
-- [ ] **1.3 Decision Log**: Select Vector DB & Embedding Models
+- [x] **1.3 Decision Log**: Select Vector DB & Embedding Models
   - Document choice: Local (Chroma/Qdrant/LanceDB) vs Managed.
   - Document choice: Open-source embedding vs API-based.
 
 ---
 
 ### Phase 2: Multi-Source Document Ingestion & Smart Chunking
-- [ ] **2.1 Document Loaders**
+- [x] **2.1 Document Loaders**
   - **PDF Loader**: Extract text, detect headers, preserve page numbers; handle tables cleanly (e.g. `pymupdf` or `pdfplumber`).
   - **Code Loader**: Extract code files, detect language (Python, TypeScript, Go), preserve filepath and line number ranges.
   - **Markdown/Company Docs Loader**: Parse headers (`#`, `##`, `###`), frontmatter metadata.
-- [ ] **2.2 Advanced Chunking Strategies**
+- [x] **2.2 Advanced Chunking Strategies**
   - **Markdown/Doc Chunker**: Header-aware recursive splitting to keep related sections together.
   - **Code-Aware Chunker**: Function/class-boundary splitting (avoids breaking functions in half).
   - **Sliding Window Chunking with Overlap**: Configure token-based overlap (e.g., 512 chunk size, 64 token overlap) to prevent lost context at chunk boundaries.
-- [ ] **2.3 Metadata Enrichment**
+- [x] **2.3 Metadata Enrichment**
   - Attach metadata to every chunk: `source_path`, `document_type`, `page_number`, `header_path`, `created_at`, `chunk_id`.
 
 ---
 
 ### Phase 3: Embedding Pipeline & Vector Store Setup
-- [ ] **3.1 Unified Embedding Interface**
+- [x] **3.1 Unified Embedding Interface**
   - Abstract base class `BaseEmbedder` with methods `embed_documents(texts)` and `embed_query(text)`.
   - Implement at least one local provider (e.g. `FastEmbed` / `HuggingFace`) and one API provider (e.g. OpenAI / Gemini / Ollama).
-- [ ] **3.2 Vector Database Integration**
+- [x] **3.2 Vector Database Integration**
   - Initialize vector store collection with schema validation and distance metric (Cosine or Inner Product).
   - Implement batch upsert with chunk deduplication (based on content hash).
   - Implement metadata filtering (e.g. filter by `document_type == 'code'` or `source_path == 'quarterly_report.pdf'`).
@@ -94,64 +94,64 @@ A step-by-step roadmap to build an industry-grade Retrieval-Augmented Generation
 ---
 
 ### Phase 4: Production-Grade Retrieval & Reranking (The Hiring Differentiator)
-- [ ] **4.1 Dense Vector Retrieval**
+- [x] **4.1 Dense Vector Retrieval**
   - Top-$K$ semantic similarity search returning chunks with relevance scores.
-- [ ] **4.2 Sparse Keyword Search (BM25)**
+- [x] **4.2 Sparse Keyword Search (BM25)**
   - Build or integrate a BM25 index over the chunks for exact token matching (crucial for error codes, function names, acronyms).
-- [ ] **4.3 Hybrid Search & Reciprocal Rank Fusion (RRF)**
+- [x] **4.3 Hybrid Search & Reciprocal Rank Fusion (RRF)**
   - Combine Dense and Sparse retrieval scores using RRF:
     $$RRF\_Score(d) = \sum_{m \in M} \frac{1}{k + r_m(d)}$$
   - Retrieve candidate pool (e.g., top 25 candidates).
-- [ ] **4.4 Cross-Encoder Reranker**
+- [x] **4.4 Cross-Encoder Reranker**
   - Pass the top candidates to a cross-encoder model (e.g., `BAAI/bge-reranker-base` or FlashRank).
   - Trim to final top-$N$ most relevant chunks (e.g., top 3–5) for the context window.
 
 ---
 
 ### Phase 5: Generation, Prompt Engineering & Strict Citations
-- [ ] **5.1 Context Assembly & Token Budgeting**
+- [x] **5.1 Context Assembly & Token Budgeting**
   - Deduplicate overlapping chunks and assemble context within model token budget.
-- [ ] **5.2 Grounded Prompt Architecture**
+- [x] **5.2 Grounded Prompt Architecture**
   - Craft system prompt with strict rules:
     - Never hallucinate facts outside the provided context.
     - If the context doesn't contain the answer, explicitly state: *"I cannot find this information in the provided documents."*
     - Mandate bracketed citations: `[Doc: <filename>, Page: <page>, Section: <header>]`.
-- [ ] **5.3 Structured & Streaming Output**
+- [x] **5.3 Structured & Streaming Output**
   - Implement token streaming for low Time-to-First-Token (TTFT).
   - Return structured metadata alongside the answer (list of cited sources with confidence scores).
 
 ---
 
 ### Phase 6: API Layer & User Interface
-- [ ] **6.1 FastAPI Backend**
+- [x] **6.1 FastAPI Backend**
   - `POST /api/v1/ingest`: Upload file(s) or folder paths to trigger ingestion.
   - `POST /api/v1/query`: Standard Q&A endpoint.
   - `POST /api/v1/query/stream`: Server-Sent Events (SSE) streaming endpoint.
   - `GET /api/v1/documents`: List indexed documents and metadata.
   - `DELETE /api/v1/documents/{id}`: Remove document and its vectors.
-- [ ] **6.2 Interactive Web UI**
+- [x] **6.2 Interactive Web UI**
   - Clean, responsive chat interface with document upload tray, source citation preview drawer, and latency/model metrics.
 
 ---
 
 ### Phase 7: RAG Evaluation & Benchmarking (Gold Standard for Resumes)
-- [ ] **7.1 Synthetic & Golden QA Test Dataset**
+- [x] **7.1 Synthetic & Golden QA Test Dataset**
   - Create a dataset of 15–25 realistic questions, ground-truth context, and expected answers across PDFs and code.
-- [ ] **7.2 Evaluation Metrics Implementation**
+- [x] **7.2 Evaluation Metrics Implementation**
   - **Context Relevance**: Are the retrieved chunks actually relevant to the question?
   - **Faithfulness / Groundedness**: Is the answer derived *only* from the context?
   - **Answer Relevance**: Does the generated answer directly address the question asked?
-- [ ] **7.3 Automated Eval Runner**
+- [x] **7.3 Automated Eval Runner**
   - Script to run queries against test set and compute metrics score table.
 
 ---
 
 ### Phase 8: Observability, Edge Cases & Polish
-- [ ] **8.1 Tracing & Logging**
+- [x] **8.1 Tracing & Logging**
   - Instrument retrieval latency, token usage, and search hit distribution.
-- [ ] **8.2 Edge Case Handling**
+- [x] **8.2 Edge Case Handling**
   - Empty search results, corrupt PDFs, queries outside the domain, oversized documents.
-- [ ] **8.3 Documentation & Demo**
+- [x] **8.3 Documentation & Demo**
   - Architecture diagram, benchmarking results, quickstart guide, and video/GIF demo for GitHub portfolio.
 
 ---
