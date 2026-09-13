@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     # App Settings
-    PROJECT_NAME: str = "QA_ChatBot"
+    PROJECT_NAME: str = "NexusDocs"
     DEBUG: bool = False
 
     # Generation (LLM)

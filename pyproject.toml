@@ -1,7 +1,7 @@
 [project]
-name = "qa-chatbot"
+name = "nexus-docs"
 version = "0.1.0"
-description = "Add your description here"
+description = "Enterprise Multi-Source RAG Knowledge Engine with Hybrid Search, BM25, and Strict Citations"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -12,7 +12,9 @@ dependencies = [
     "pydantic-settings>=2.15.0",
     "pypdf>=6.18.1",
     "python-dotenv>=1.2.3",
+    "python-multipart>=0.0.32",
     "rank-bm25>=0.2.2",
     "rich>=15.0.0",
+    "streamlit>=1.63.0",
     "uvicorn>=0.52.4",
 ]
