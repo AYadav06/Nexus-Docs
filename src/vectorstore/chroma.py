@@ -100,3 +100,27 @@ class ChromaVectorStore:
 
     def count(self) -> int:
         return self.collection.count()
+
+    def get_all_chunks(self) -> list[DocumentChunk]:
+        """Loads all stored chunks from ChromaDB to initialize the sparse BM25 index."""
+        data = self.collection.get()
+        chunks: list[DocumentChunk] = []
+        if not data or not data["ids"]:
+            return chunks
+
+        for i in range(len(data["ids"])):
+            chunk_id = data["ids"][i]
+            content = data["documents"][i]
+            meta = data["metadatas"][i]
+
+            metadata = DocumentMetadata(
+                source_path=meta["source_path"],
+                doc_type=DocumentType(meta["doc_type"]),
+                page_number=meta["page_number"] if meta["page_number"] != -1 else None,
+                line_start=meta["line_start"] if meta["line_start"] != -1 else None,
+                line_end=meta["line_end"] if meta["line_end"] != -1 else None,
+                section_title=meta["section_title"] if meta["section_title"] else None,
+            )
+            chunks.append(DocumentChunk(chunk_id=chunk_id, content=content, metadata=metadata))
+
+        return chunks
